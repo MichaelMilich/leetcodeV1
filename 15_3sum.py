@@ -6,42 +6,68 @@ class Solution:
         and nums[i] + nums[j] + nums[k] == 0.
 
         Notice that the solution set must not contain duplicate triplets.
+
+        todo - redo this question again, write it down and understand how it works!
         :param nums:
         :return:
         """
         res = []
-        value_dict = {}
-        for num in nums:
-            value_dict[num] = 1 + value_dict.get(num, 0)
+        nums.sort()
 
-        for index ,num in enumerate(nums):
-            key1,key2 = self.twoSum(value_dict,-num)
-            if key2 is None:
+        for i, a in enumerate(nums):
+            if i > 0 and a == nums[i - 1]:
                 continue
-            res.append([key1,key2,num])
+            l, r = i + 1, len(nums) - 1
+            while l < r:
+                three_sum = a + nums[l] + nums[r]
+                if three_sum > 0:
+                    r -= 1
+                elif three_sum < 0:
+                    l += 1
+                else:
+                    res.append([a, nums[l], nums[r]])
+                    l += 1
+                    while nums[l] == nums[l - 1] and l < r:
+                        l += 1
         return res
 
-    def twoSum(self, nums_dict: [int], target: int):
-        print(nums_dict)
-        for num in nums_dict:
-            if target - num in nums_dict:
-                if target -num == -target and nums_dict[target -num] == 1:
-                    continue
-                if num == -target and nums_dict[num] == 1:
-                    continue
-                if num == target - num and nums_dict[num] < 2:
-                    continue
-                if nums_dict[num] > 0 and nums_dict[target - num] > 0:
-                    nums_dict[num] -= 1
-                    nums_dict[target - num] -= 1
-                    nums_dict[-target] -=1
-                    return num, target - num
-        return None, None
+    def twoSum(self, numbers: [int], target: int) -> [int]:
+        """
+        Given a 1-indexed array of integers numbers that is already sorted in non-decreasing order,
+        find two numbers such that they add up to a specific target number
+
+        Let these two numbers be numbers[index1] and numbers[index2] where 1 <= index1 < index2 <= numbers.length.
+        Return the indices of the two numbers, index1 and index2,
+        added by one as an integer array [index1, index2] of length 2.
+
+        The tests are generated such that there is exactly one solution. You may not use the same element twice.
+        Your solution must use only constant extra space.
+        :param numbers:
+        :param target:
+        :return:
+        """
+        start = 0
+        stop = len(numbers) - 1
+        start_val = numbers[start]
+        stop_val = numbers[stop]
+        while start_val + stop_val != target and start < stop:
+            if start_val + stop_val > target:
+                stop -= 1
+            else:
+                start += 1
+            start_val = numbers[start]
+            stop_val = numbers[stop]
+
+        if start_val + stop_val == target:
+            print(f" {start_val} + {stop_val} = {target}")
+            return start, stop
+        else:
+            return None, None
 
 
 def some_test():
     a = Solution()
-    input_board = [1,2,-2,-1]
+    input_board = [3, 0, -2, -1, 1, 2]
     print(
         a.threeSum(input_board)
     )
