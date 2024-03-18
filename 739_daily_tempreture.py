@@ -9,27 +9,18 @@ class Solution:
         :param temperatures:
         :return:
         """
-        res = [-1 for x in temperatures]
-        i = len(temperatures)
-        max_pop = -1
-        value_dict = {}
+        res = [0 for x in temperatures]
+
+        i = len(temperatures)-1
+        stack = [i]
         while i > 0:
             i -= 1
             val = temperatures[i]
-            if val >= max_pop:
-                max_pop = val
-                print(f"new max pop = {max_pop}")
-            else:
-                for x in range(val + 1, max_pop + 1):
-                    if x in value_dict:
-                        if res[i] == -1:
-                            res[i] = value_dict[x] - i
-                        if value_dict[x] - i <= res[i]:
-                            res[i] = value_dict[x] - i
-            if res[i] == -1:
-                print(f"for index = {i} of temperature = {temperatures[i]} we place 0")
-                res[i] = 0
-            value_dict[val] = i
+            while len(stack) >0 and val >= temperatures[stack[-1]]:
+                stack.pop()
+            if len(stack) >0:
+                res[i] = stack[-1]-i
+            stack.append(i)
         return res
 
 
