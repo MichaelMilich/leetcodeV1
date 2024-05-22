@@ -1,4 +1,6 @@
 import copy
+
+
 class Solution:
     def solveNQueens(self, n: int) -> [[str]]:
         """
@@ -11,69 +13,40 @@ class Solution:
         :return:
         """
         res = []
-        board = [["." for x in range(n)] for x in range(n)]
-        available_space = set()
-        for i in range(len(board)):
-            for j in range(len(board[i])):
-                available_space.add((i, j))
+        board = ["." * n for _ in range(n)]
+        columns = {i: False for i in range(n)}
+        rows = {i: False for i in range(n)}
+        down_side = {i: False for i in range(-(n - 1), n)}
+        up_side = {i: False for i in range(2 * (n - 1) + 1)}
 
-        def dfs(k: int, board: [[str]], available_space: set):
-            if k == n:
-                for i in range(len(board)):
-                    board[i] = "".join(board[i])
-                res.append(board)
+        def dfs(i: int, n: int):
+            if i >= n:
+                res.append(board[:])
                 return
-            if len(available_space) == 0:
-                return
-            for i in range(n):
-                for j in range(n):
-                    available_space_copy = available_space.copy()
-                    board_copy = copy.deepcopy(board)
-                    if (i, j) in available_space_copy:
-                        board_copy[i][j] = "Q"
-                        for ki in range(n):
-                            if (ki, j) in available_space_copy:
-                                available_space_copy.remove((ki, j))
-                        for kj in range(n):
-                            if (i, kj) in available_space_copy:
-                                available_space_copy.remove((i, kj))
-                        ki = i - 1
-                        kj = j - 1
-                        while ki >= 0 and kj >= 0:
-                            if (ki, kj) in available_space_copy:
-                                available_space_copy.remove((ki, kj))
-                            ki -= 1
-                            kj -= 1
-                        ki = i - 1
-                        kj = j + 1
-                        while ki >= 0 and kj < n:
-                            if (ki, kj) in available_space_copy:
-                                available_space_copy.remove((ki, kj))
-                            ki -= 1
-                            kj += 1
-                        ki = i + 1
-                        kj = j + 1
-                        while ki < n and kj < n:
-                            if (ki, kj) in available_space_copy:
-                                available_space_copy.remove((ki, kj))
-                            ki += 1
-                            kj += 1
-                        ki = i + 1
-                        kj = j - 1
-                        while ki < n and kj >= 0:
-                            if (ki, kj) in available_space_copy:
-                                available_space_copy.remove((ki, kj))
-                            ki += 1
-                            kj -= 1
-                        dfs(k + 1, board_copy, available_space_copy)
+            for j in range(n):
+                check = not rows[j] and not columns[i] and not down_side[i-j] and not up_side[i+j]
+                if check:
+                    rows[j]=True
+                    columns[i]=True
+                    down_side[i-j]=True
+                    up_side[i+j]=True
+                    board[i]="."*j+"Q"+"."*(n-1-j)
+                    dfs(i+1,n)
+                    rows[j] = False
+                    columns[i] = False
+                    down_side[i - j] = False
+                    up_side[i + j] = False
+                    board[i] = "." * n
+            return
 
-        dfs(0, board, available_space)
+        dfs(0,n)
         return res
+
 
 
 def some_test():
     a = Solution()
-    input_board = 4
+    input_board = 5
     target = "ABCDEFGHI"
     print(input_board)
     res = a.solveNQueens(input_board)

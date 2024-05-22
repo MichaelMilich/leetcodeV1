@@ -7,21 +7,22 @@ class Solution:
         :param nums:
         :return:
         """
-        # O(n)/O(1) : Time/Memory
-        res = nums[0]
-        curMin, curMax = 1, 1
-
-        for n in nums:
-            tmp = curMax * n
-            curMax = max(n * curMax, n * curMin, n)
-            curMin = min(tmp, n * curMin, n)
-            res = max(res, curMax)
+        res = max(nums)
+        theMin, theMax = 1, 1
+        for num in nums:
+            if num == 0:
+                theMin, theMax = 1, 1
+                continue
+            temp = theMax * num
+            theMax = max(temp, theMin * num, num)
+            theMin = min(temp, theMin * num, num)
+            res = max(res, theMax)
         return res
 
 
 def some_test():
     a = Solution()
-    input_case = [2,3,-2,4,4]
+    input_case = [3, 1, -2, 2, 2, 1, -2, -3]
     target = 1
     print(input_case)
     res = a.maxProduct(input_case)
